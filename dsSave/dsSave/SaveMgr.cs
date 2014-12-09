@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -17,27 +18,24 @@ namespace dsSave
 
 
         //private const string DEFAULT_SAVE_NAME = @"DRAKS0005.sl2";
-        private const string DEFAULT_SAVE_NAME = @"DARKSII0000.sl2";
+       // private const string DEFAULT_SAVE_NAME = @"DARKSII0000.sl2";
 
-        private const string DEFAULT_QUICKSAVE_NAME = @"quickSave";
-        private const string DEFAULT_AUTOSAVE_NAME = @"autoSave";
-        private const string AUTO_SAVE_DIR = @"_autoSaveGames\";
-        private const string QUICK_SAVE_DIR = @"_quickSaveGames\";
-        private const string CUSTOM_SAVE_DIR = @"_customSaveGames\";
-        private const string MAINBACKUP_SAVE_DIR = @"_MainSaveFileBackups\";
-
+      
+       
+        //Fuck everyting needs to share these also.  Kind of. 
+        /// ///////////////////////////////////////
         private const long SAVE_SIZE = 4330480;
-
         private string currentlyViewedDirectory;
-
         private string userSaveDir;
         public string dsCustomSaveDir;
         public string dsQuickSaveDir;
         public string dsAutoSaveDir;
         public string dsMainBackupSaveDir;
-        private string dsMainSave = "";
-        private string dsQuickSave = "";
-        private string dsAutoSave = "";
+        private string dsMainSave;
+        private string dsQuickSave;
+        private string dsAutoSave;
+        ///////////////////////////////////////////////
+
 
         private int currentAutoSaveNumber;
 
