@@ -1,0 +1,9 @@
+C:\Projects\dsSave\dsSave\dsSave\bin\Debug\dsSave.exe.config
+C:\Projects\dsSave\dsSave\dsSave\bin\Debug\dsSave.exe
+C:\Projects\dsSave\dsSave\dsSave\bin\Debug\dsSave.pdb
+C:\Projects\dsSave\dsSave\dsSave\obj\Debug\dsSave.csprojResolveAssemblyReference.cache
+C:\Projects\dsSave\dsSave\dsSave\obj\Debug\dsSave.Properties.Resources.resources
+C:\Projects\dsSave\dsSave\dsSave\obj\Debug\dsSave.csproj.GenerateResource.Cache
+C:\Projects\dsSave\dsSave\dsSave\obj\Debug\dsSave.exe
+C:\Projects\dsSave\dsSave\dsSave\obj\Debug\dsSave.pdb
+C:\Projects\dsSave\dsSave\dsSave\obj\Debug\dsSave.mainForm.resources
