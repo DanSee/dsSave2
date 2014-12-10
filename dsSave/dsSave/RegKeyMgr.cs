@@ -31,8 +31,18 @@ namespace dsSave
         public static string getRegKey(string keyNodeName)
         {
             return (string)Registry.GetValue(KEYNAME, keyNodeName, "");
-        } 
-        
+        }
+
+
+        public static void setRegistryKey(string valueName, string keyValue)
+        {
+            try
+            {
+                setKey(valueName, keyValue);
+            }
+            catch (Exception ee)
+            {}
+        }
     
     }
 }

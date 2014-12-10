@@ -14,7 +14,12 @@ namespace dsSave
     public partial class mainForm : Form
     {
         private SaveMgr saveMan;
-        private string currentDirectory; 
+        private string currentDirectory;
+
+        /// <summary>
+        /// //////////////
+        /// </summary>
+        private RealSaveManager realSaveManager; 
 
         public mainForm()
         {
@@ -93,22 +98,6 @@ namespace dsSave
             enableButtons(true);
         }
 
-     
-         private void firstRun()
-        {
-            if (saveMan.isSaveDataValid())
-            {
-                DialogResult setAnyways = MessageBox.Show("Your save directory is already Valid. Set new save directory anyways?",
-                    "confirmation",
-                    MessageBoxButtons.YesNo);
-                if (setAnyways == DialogResult.Yes)
-                {
-                    saveMan.saveUserDirInRegistry();
-                    saveMan.refreshSavedGames(lstBoxSavedGames);
-                }
-            }
-        }
-
              private void createContextMenu()
         {
             MenuItem delete = new MenuItem();
@@ -128,7 +117,7 @@ namespace dsSave
 
         private void enterSaveDIrectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            firstRun();
+            saveMan.firstRun();
             saveMan.checkForSavePath();
         }
 

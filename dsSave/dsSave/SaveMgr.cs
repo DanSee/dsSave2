@@ -10,33 +10,19 @@ using System.Windows.Forms;
 
 namespace dsSave
 {
-    internal class SaveMgr
+    internal class SaveMgr 
     {
-
-        private const string REGKEY_SAVEDIR = "UserSaveDir";
-        private const string REGEKEY_LASTVIEWED = "LastViewedDir";
 
 
         //private const string DEFAULT_SAVE_NAME = @"DRAKS0005.sl2";
        // private const string DEFAULT_SAVE_NAME = @"DARKSII0000.sl2";
 
-      
-       
-        //Fuck everyting needs to share these also.  Kind of. 
-        /// ///////////////////////////////////////
-        private const long SAVE_SIZE = 4330480;
-        private string currentlyViewedDirectory;
-        private string userSaveDir;
-        public string dsCustomSaveDir;
-        public string dsQuickSaveDir;
-        public string dsAutoSaveDir;
-        public string dsMainBackupSaveDir;
-        private string dsMainSave;
-        private string dsQuickSave;
-        private string dsAutoSave;
-        ///////////////////////////////////////////////
+        
 
+        public Save _slug = new SaveQuick();
 
+        public RealSaveManager _realSave = new RealSaveManager();
+        
         private int currentAutoSaveNumber;
 
         private readonly Label displayLabel;
@@ -48,33 +34,24 @@ namespace dsSave
             timeStampLabel = lblTimeStamp;
         }
 
-        public void confirmOverwrite(string dataToSave, string gameSaveName)
-        {
-            DialogResult resultOfDelete = MessageBox.Show("Saving will overwrite " + gameSaveName + ", Continue?",
-                "confirmation", MessageBoxButtons.YesNoCancel);
-
-            if (resultOfDelete == DialogResult.Yes)
-            {
-                File.Copy(dsMainSave, dataToSave, true);
-            }
-        }
 
         public void deleteSelectedSave(string selected)
         {
+           
             if (selected == DEFAULT_SAVE_NAME)
             {
                 MessageBox.Show("You can not delete the main game save.");
             }
-            else if (File.Exists(currentlyViewedDirectory + selected))
+            else if (File.Exists(_realSave.currentlyViewedDirectory + selected))
             {
                 DialogResult resultOfDelete = MessageBox.Show("Are you sure you want to delete " + selected + "?",
                     "confirmation", MessageBoxButtons.YesNoCancel);
 
                 if (resultOfDelete == DialogResult.Yes)
                 {
-                    if (File.Exists(currentlyViewedDirectory + selected))
+                    if (File.Exists(_realSave.currentlyViewedDirectory + selected))
                     {
-                        File.Delete(currentlyViewedDirectory + selected);
+                        File.Delete(_realSave.currentlyViewedDirectory + selected);
                     }
                     else
                     {
@@ -88,154 +65,30 @@ namespace dsSave
             }
         }
 
-        public void saveCustom(string gameSaveName)
-        {
-            getSaveDirRefs();
-            string dataToSave = dsCustomSaveDir + gameSaveName;
 
-            if (File.Exists(dsMainSave))
-            {
-                if (File.Exists(dataToSave))
-                {
-                    confirmOverwrite(dataToSave, gameSaveName);
-                }
-                else
-                {
-                    File.Copy(dsMainSave, dataToSave, true);
-                }
-                printLabel("Saved " + gameSaveName, "Saved custom");
-            }
-            else
-            {
-                MessageBox.Show("The main save data is missing.");
-                printLabel("Save data missing", "Failed custom save");
-            }
-        }
 
         public void loadCustomClick(string selected)
         {
-            getSaveDirRefs();
-            string selectedSave = currentlyViewedDirectory + selected;
-            FileInfo selectedSaveData = new FileInfo(selectedSave);
-
-            if (File.Exists(selectedSave))
-            {
-                if (selectedSaveData.Length == SAVE_SIZE)
-                {
-                    File.Copy(dsMainSave, dsMainBackupSaveDir + DEFAULT_SAVE_NAME + "." + getTimestamp(".dd_MMM_yyyy.hh;mm;sstt"), true);
-                    File.Copy(selectedSave, dsMainSave, true);
-                    printLabel("Loaded: " + selected, "Loaded custom");
-                }
-                else
-                {
-                    MessageBox.Show(selected + "  is not a valid save file. " + Environment.NewLine +
-                                    "(if this IS in fact a valid save file, give it a .sl2 extention and try to load again.)");
-                }
-            }
-            else
-            {
-                MessageBox.Show("File no longer exists");
-            }
-
+            _realSave.customSaveClick();
         }
 
-        public void quickSaveClick()
-        {
-            getSaveDirRefs();
-
-            if (isSaveDataValid())
-            {
-                string highestNumber = getHighestSaveNumber(true);
-                string newSaveName = dsQuickSaveDir + highestNumber + "." + DEFAULT_QUICKSAVE_NAME +
-                                     getTimestamp(".dd_MMM_yyyy.hh-mm.sstt");
-                File.Copy(dsMainSave, newSaveName);
-                printLabel("QuickSave", "Quicksave");
-            }
-            else
-            {
-                MessageBox.Show("Save data is not valid", "Failed  quicksave");
-            }
-        }
 
         public void loadQuicksaveClick()
         {
-            getSaveDirRefs();
-
-            DirectoryInfo directory = new DirectoryInfo(dsQuickSaveDir);
-            FileInfo[] files = directory.GetFiles();
-
-            if (files.Length != 0)
-            {
-                string currentSaveNumber = getHighestSaveNumber();
-                int currentNumber;
-                string fileToLoad = ""; 
-
-                foreach (FileInfo f in files)
-                {
-                    int currSaveNum;
-                    int.TryParse(currentSaveNumber, out currSaveNum);
-                    bool isValidNumber = int.TryParse(f.Name.Substring(0, 2), out currentNumber);
-                    if (isValidNumber &&  currSaveNum == currentNumber)
-                    {
-                        fileToLoad = f.Name;
-                    }
-                }
-
-                File.Copy(dsMainSave, dsMainBackupSaveDir + DEFAULT_SAVE_NAME + "." + getTimestamp(".dd_MMM_yyyy.hh;mm;sstt"), true);
-                File.Copy(dsQuickSaveDir + fileToLoad, dsMainSave, true);
-                setCurrentlyViewedDirectory(dsQuickSaveDir);
-                printLabel("Loaded most recent Quicksave", "Quicksave loaded");
-            }
-            else
-            {
-                printLabel("There is no quicksave file to load!", "Failed loading quicksave");
-            }
+            _realSave.quickSaveClick();
         }
 
-        private string getHighestSaveNumber(bool incrementNumber = false)
+        public void loadAutoClick(string selected)
         {
-            int highestNumber = 0;
-            string returnString;
-            DirectoryInfo directory = new DirectoryInfo(dsQuickSaveDir);
-            FileInfo[] files = directory.GetFiles();
-            if (files.Length != 0)
-            {
-                List<int> allNumbers = new List<int>();
-                foreach (FileInfo f in files)
-                {
-                    bool isValidSave = int.TryParse(f.Name.Substring(0, 2), out highestNumber);
-                    if (isValidSave)
-                    {
-                        allNumbers.Add(highestNumber);
-                    }
-
-                }
-                if (allNumbers.Count > 0)
-                {
-                    highestNumber = allNumbers.Max();
-                }
-            }
-
-            if (incrementNumber)
-            {
-                highestNumber++;
-            }
-            if (highestNumber < 10)
-            {
-                returnString = "0" + highestNumber; 
-            }
-            else
-            {
-                returnString = highestNumber.ToString(); 
-            }
-
-
-            return returnString;
+            _realSave.customSaveClick();
         }
+
+        
+
 
         public void refreshSavedGames(ListBox lstBoxSavedGames, string currentDirectory)
         {
-            getSaveDirRefs();
+            _realSave.getSaveDirRefs();
             lstBoxSavedGames.Items.Clear();
 
             if (Directory.Exists(currentDirectory))
@@ -248,7 +101,7 @@ namespace dsSave
                     lstBoxSavedGames.Items.Add(f.Name);
                 }
 
-               setCurrentlyViewedDirectory(currentDirectory);
+                _realSave.setCurrentlyViewedDirectory(currentDirectory);
             }
             else
             {
@@ -256,14 +109,16 @@ namespace dsSave
             }
         }
 
+
+
         public void refreshSavedGames(ListBox lstBoxSavedGames)
         {
-            getSaveDirRefs();
+            _realSave.getSaveDirRefs();
             lstBoxSavedGames.Items.Clear();
 
-            if (Directory.Exists(currentlyViewedDirectory))
+            if (Directory.Exists(_realSave.currentlyViewedDirectory))
             {
-                DirectoryInfo info = new DirectoryInfo(currentlyViewedDirectory);
+                DirectoryInfo info = new DirectoryInfo(_realSave.currentlyViewedDirectory);
                 FileInfo[] files = info.GetFiles();
 
                 foreach (FileInfo f in files)
@@ -276,131 +131,49 @@ namespace dsSave
                 lstBoxSavedGames.Items.Add("Nothing to show for this directory.");
             }
         }
+     
 
-        public void checkForSavePath()
+
+        private void firstRun()
         {
-          //  userSaveDir = getUserSaveDir();
-            userSaveDir = @"C:\Users\dann\AppData\Roaming\DarkSoulsII\0110000105e1a214\";
-            dsMainSave = userSaveDir + DEFAULT_SAVE_NAME;
-            while (!isSaveDataValid())
+            if (_realSave.isSaveDataValid())
             {
-                saveUserDirInRegistry();
-                dsMainSave = userSaveDir + DEFAULT_SAVE_NAME;
+                DialogResult setAnyways = MessageBox.Show("Your save directory is already Valid. Set new save directory anyways?",
+                    "confirmation",
+                    MessageBoxButtons.YesNo);
+                if (setAnyways == DialogResult.Yes)
+                {
+                    _realSave.saveUserDirInRegistry();
+                    refreshSavedGames(lstBoxSavedGames);
+                }
             }
-           
-
-            dsAutoSaveDir = userSaveDir + AUTO_SAVE_DIR;
-            dsQuickSaveDir = userSaveDir + QUICK_SAVE_DIR;
-            dsCustomSaveDir = userSaveDir + CUSTOM_SAVE_DIR;
-            dsMainBackupSaveDir = userSaveDir + MAINBACKUP_SAVE_DIR;
-
-            dsAutoSave = dsAutoSaveDir + DEFAULT_AUTOSAVE_NAME;
-            dsQuickSave = dsQuickSaveDir + DEFAULT_QUICKSAVE_NAME;
-
-            createDirIfNotExist(dsCustomSaveDir);
-            createDirIfNotExist(dsAutoSaveDir);
-            createDirIfNotExist(dsQuickSaveDir);
-            createDirIfNotExist(dsMainBackupSaveDir);
-
-            getSaveDirRefs();
-        }
-
-        private void createDirIfNotExist(string dirName)
-        {
-            if (!Directory.Exists(dirName))
-            {
-                Directory.CreateDirectory(dirName);
-            }
-        }
-
-        public bool isSaveDataValid()
-        {
-            return File.Exists(dsMainSave);
         }
 
     
 
-        public void saveUserDirInRegistry()
+      
+
+
+        public void checkforSavePath()
         {
-            string prompt = "Please enter your Dark souls game save directory." + Environment.NewLine + Environment.NewLine
-                       + "Your save directory should be something like: " + Environment.NewLine + Environment.NewLine
-                       + @"C:\Users\_windowsUsername_\Documents\NBGI\DarkSouls\_windowsLiveUsername_\";
-            string title = @"Set save game directory";
-            string defaultText = @"C:\Users\dann\AppData\Roaming\DarkSoulsII\0110000105e1a214";
-
-            string defaultText1 = @"C:\Users\WINDOWS_USERNAME\Documents\NBGI\DarkSouls\WINDOWS_LIVE_USERNAME";
-
-            userSaveDir = Microsoft.VisualBasic.Interaction.InputBox(prompt, title, defaultText, -1, -1);
-            if (!userSaveDir.EndsWith("\\"))
-            {
-                userSaveDir += "\\";
-            }
-            while (!Directory.Exists(userSaveDir) || !File.Exists(userSaveDir + DEFAULT_SAVE_NAME))
-            {
-                DialogResult tryAgain = MessageBox.Show("That was not a valid directory, try again?", "confirmation", MessageBoxButtons.YesNo);
-                userSaveDir = Microsoft.VisualBasic.Interaction.InputBox(prompt, title, userSaveDir, -1, -1);
-            }
-
-            setRegistryKey(REGKEY_SAVEDIR, userSaveDir);
+            _slug.checkForSavePath();
         }
 
 
-        private void setCurrentlyViewedDirectory(string currentDir)
-        {
-            currentlyViewedDirectory = currentDir;
-            RegKeyMgr.setKey(REGEKEY_LASTVIEWED, currentlyViewedDirectory);
-        }
-
-        private void setRegistryKey(string valueName, string keyValue )
-        {
-            try
-            {
-                RegKeyMgr.setKey(valueName, keyValue);
-            }
-            catch (Exception ee)
-            {
-                MessageBox.Show(ee.Message);
-            }
-        }
-
-
-        public void getSaveDirRefs()
-        {
-            dsMainSave = "";
-            dsQuickSave = "";
-            //userSaveDir = getUserSaveDir();
-            userSaveDir = @"C:\Users\dann\AppData\Roaming\DarkSoulsII\0110000105e1a214\";
-            dsMainSave = userSaveDir + DEFAULT_SAVE_NAME;
-            dsQuickSave = userSaveDir  + QUICK_SAVE_DIR + DEFAULT_QUICKSAVE_NAME;
-            dsAutoSave = userSaveDir  + AUTO_SAVE_DIR + DEFAULT_AUTOSAVE_NAME;
-
-            currentlyViewedDirectory =   RegKeyMgr.getRegKey(REGEKEY_LASTVIEWED);
-            if (currentlyViewedDirectory == "")
-            {
-                currentlyViewedDirectory = userSaveDir;
-            }
-        }
-
-
-        private string getUserSaveDir()
-        {
-            string rSaveDir = RegKeyMgr.getRegKey(REGKEY_SAVEDIR);
-            if (!rSaveDir.EndsWith("\\"))
-            {
-                rSaveDir += "\\";
-            }
-            return rSaveDir;
-        }
+     
 
         private string getTimestamp(string format)
         {
             return DateTime.Now.ToString(format);
         }
 
-        private void printLabel(string text, string lastAction)
-        {
-            displayLabel.Text = text;
-            timeStampLabel.Text = "Last action @ " + getTimestamp("HH:mm:ss") + " - Action was: " + lastAction;
-        }
+//
+//        private void printLabel(string text, string lastAction)
+//        {
+//            _slug.printLabel();
+//            displayLabel.Text = text;
+//            timeStampLabel.Text = "Last action @ " + getTimestamp("HH:mm:ss") + " - Action was: " + lastAction;
+//        }
+
     }
 }

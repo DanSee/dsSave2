@@ -53,8 +53,13 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RealSaveManager.cs" />
     <Compile Include="RegKeyMgr.cs" />
+    <Compile Include="Save.cs" />
+    <Compile Include="SaveAuto.cs" />
+    <Compile Include="SaveCustom.cs" />
     <Compile Include="SaveMgr.cs" />
+    <Compile Include="SaveQuick.cs" />
     <EmbeddedResource Include="mainForm.resx">
       <DependentUpon>mainForm.cs</DependentUpon>
     </EmbeddedResource>
