@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace dsSave
@@ -10,49 +12,6 @@ namespace dsSave
         public Save _auto = new SaveAuto();
         public Save _custom = new SaveCustom();
         public Save _quick = new SaveQuick();
-
-        public void customSaveClick()
-        {
-            getSaveDirRefs();
-            _custom.doMySaveFuckYea("Fuck this needs to be user input");
-        }
-        public void autoSaveClick()
-        {
-            getSaveDirRefs();
-            _auto.doMySaveFuckYea("");
-        }
-        public void quickSaveClick()
-        {
-            getSaveDirRefs();
-            _quick.doMySaveFuckYea("");
-        }
-
-
-        public void saveUserDirInRegistry()
-        {
-            string prompt = "Please enter your Dark souls game save directory." + Environment.NewLine + Environment.NewLine
-                       + "Your save directory should be something like: " + Environment.NewLine + Environment.NewLine
-                       + @"C:\Users\_windowsUsername_\Documents\NBGI\DarkSouls\_windowsLiveUsername_\";
-            string title = @"Set save game directory";
-            string defaultText = @"C:\Users\dann\AppData\Roaming\DarkSoulsII\0110000105e1a214";
-
-            string defaultText1 = @"C:\Users\WINDOWS_USERNAME\Documents\NBGI\DarkSouls\WINDOWS_LIVE_USERNAME";
-
-            userSaveDir = Microsoft.VisualBasic.Interaction.InputBox(prompt, title, defaultText, -1, -1);
-            if (!userSaveDir.EndsWith("\\"))
-            {
-                userSaveDir += "\\";
-            }
-            while (!Directory.Exists(userSaveDir) || !File.Exists(userSaveDir + DEFAULT_SAVE_NAME))
-            {
-                DialogResult tryAgain = MessageBox.Show("That was not a valid directory, try again?", "confirmation", MessageBoxButtons.YesNo);
-                userSaveDir = Microsoft.VisualBasic.Interaction.InputBox(prompt, title, userSaveDir, -1, -1);
-            }
-
-            RegKeyMgr.setRegistryKey(REGKEY_SAVEDIR, userSaveDir);
-        }
-
-
 
         public const string DEFAULT_SAVE_NAME = @"DARKSII0000.sl2";
         public const string MAINBACKUP_SAVE_DIR = @"_MainSaveFileBackups\";
@@ -79,6 +38,121 @@ namespace dsSave
         private const string DEFAULT_AUTOSAVE_NAME = @"autoSave";
 
 
+        public void customSaveClick(string gameSaveName)
+        {
+           getSaveDirRefs();
+
+            if (File.Exists(dsMainSave))
+            {
+                _custom.doMySaveFuckYea(dsMainSave, gameSaveName, dsCustomSaveDir);
+            }
+            else
+            {
+                MessageBox.Show("The main save data is missing.");
+            }
+        }
+
+        public void loadCustomSaveClick(String selected)
+        {
+            string selectedSave = currentlyViewedDirectory + selected;
+            FileInfo selectedSaveData = new FileInfo(selectedSave);
+
+            if (File.Exists(selectedSave))
+            {
+                if (selectedSaveData.Length == SAVE_SIZE)
+                {
+                    _custom.loadSave(dsMainSave, selectedSave, "");
+                    printLabel("Loaded: " + selected, "Loaded custom");
+                }
+                else
+                {
+                    MessageBox.Show(selected + "  is not a valid save file. " + Environment.NewLine +
+                                    "(if this IS in fact a valid save file, give it a .sl2 extention and try to load again.)");
+                }
+            }
+            else
+            {
+                MessageBox.Show("File no longer exists");
+            }
+        }
+
+        public void quickSaveClick()
+        {
+            getSaveDirRefs();
+            if (isSaveDataValid())
+            {
+                _quick.doMySaveFuckYea(dsMainSave, DEFAULT_QUICKSAVE_NAME, dsQuickSaveDir + getHighestSaveNumber(true));
+            }
+            else
+            {
+                MessageBox.Show("Save data is not valid", "Failed  quicksave");
+            }
+        }
+
+        public void loadQuickSaveClick()
+        {
+            DirectoryInfo directory = new DirectoryInfo(dsQuickSaveDir);
+            FileInfo[] files = directory.GetFiles();
+
+            if (files.Length != 0)
+            {
+                string currentSaveNumber = getHighestSaveNumber();
+                int currentNumber;
+                string fileToLoad = "";
+
+                foreach (FileInfo f in files)
+                {
+                    int currSaveNum;
+                    int.TryParse(currentSaveNumber, out currSaveNum);
+                    bool isValidNumber = int.TryParse(f.Name.Substring(0, 2), out currentNumber);
+                    if (isValidNumber && currSaveNum == currentNumber)
+                    {
+                        fileToLoad = f.Name;
+                    }
+                }
+                _quick.loadSave(dsMainSave, fileToLoad, "");
+                setCurrentlyViewedDirectory(dsQuickSaveDir);
+                printLabel("Loaded most recent Quicksave", "Quicksave loaded");
+            }
+            else
+            {
+                printLabel("There is no quicksave file to load!", "Failed loading quicksave");
+            }
+        }
+
+        
+
+        public void autoSaveClick()
+        {
+            getSaveDirRefs();
+            _auto.doMySaveFuckYea("", "", "");
+        }
+
+        public void saveUserDirInRegistry()
+        {
+            string prompt = "Please enter your Dark souls game save directory." + Environment.NewLine + Environment.NewLine
+                       + "Your save directory should be something like: " + Environment.NewLine + Environment.NewLine
+                       + @"C:\Users\_windowsUsername_\Documents\NBGI\DarkSouls\_windowsLiveUsername_\";
+            string title = @"Set save game directory";
+            string defaultText = @"C:\Users\dann\AppData\Roaming\DarkSoulsII\0110000105e1a214";
+
+            string defaultText1 = @"C:\Users\WINDOWS_USERNAME\Documents\NBGI\DarkSouls\WINDOWS_LIVE_USERNAME";
+
+            userSaveDir = Microsoft.VisualBasic.Interaction.InputBox(prompt, title, defaultText, -1, -1);
+            if (!userSaveDir.EndsWith("\\"))
+            {
+                userSaveDir += "\\";
+            }
+            while (!Directory.Exists(userSaveDir) || !File.Exists(userSaveDir + DEFAULT_SAVE_NAME))
+            {
+                DialogResult tryAgain = MessageBox.Show("That was not a valid directory, try again?", "confirmation", MessageBoxButtons.YesNo);
+                userSaveDir = Microsoft.VisualBasic.Interaction.InputBox(prompt, title, userSaveDir, -1, -1);
+            }
+
+            RegKeyMgr.setRegistryKey(REGKEY_SAVEDIR, userSaveDir);
+        }
+
+
         public void checkForSavePath()
         {
 
@@ -90,9 +164,6 @@ namespace dsSave
                 saveUserDirInRegistry();
                 dsMainSave = userSaveDir + DEFAULT_SAVE_NAME;
             }
-
-
-
 
             dsAutoSaveDir = userSaveDir + AUTO_SAVE_DIR;
             dsQuickSaveDir = userSaveDir + QUICK_SAVE_DIR;
@@ -127,6 +198,51 @@ namespace dsSave
             }
         }
 
+
+        public void deleteSelectedSave(string selected)
+        {
+
+            if (selected == DEFAULT_SAVE_NAME)
+            {
+                MessageBox.Show("You can not delete the main game save.");
+            }
+            else if (File.Exists(currentlyViewedDirectory + selected))
+            {
+                DialogResult resultOfDelete = MessageBox.Show("Are you sure you want to delete " + selected + "?",
+                    "confirmation", MessageBoxButtons.YesNoCancel);
+
+                if (resultOfDelete == DialogResult.Yes)
+                {
+                    if (File.Exists(currentlyViewedDirectory + selected))
+                    {
+                        File.Delete(currentlyViewedDirectory + selected);
+                    }
+                    else
+                    {
+                        MessageBox.Show("The selected file does not exist.");
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("The selected file does not exist.");
+            }
+        }
+
+        public void firstRun()
+        {
+            if (isSaveDataValid())
+            {
+                DialogResult setAnyways = MessageBox.Show("Your save directory is already Valid. Set new save directory anyways?",
+                    "confirmation",
+                    MessageBoxButtons.YesNo);
+                if (setAnyways == DialogResult.Yes)
+                {
+                    saveUserDirInRegistry();
+                }
+            }
+        }
+
         public bool isSaveDataValid()
         {
             return File.Exists(dsMainSave);
@@ -157,6 +273,49 @@ namespace dsSave
             return rSaveDir;
         }
 
+        private string getHighestSaveNumber(bool incrementNumber = false)
+        {
+            int highestNumber = 0;
+            string returnString;
+            DirectoryInfo directory = new DirectoryInfo(dsQuickSaveDir);
+            FileInfo[] files = directory.GetFiles();
+            if (files.Length != 0)
+            {
+                List<int> allNumbers = new List<int>();
+                foreach (FileInfo f in files)
+                {
+                    bool isValidSave = int.TryParse(f.Name.Substring(0, 2), out highestNumber);
+                    if (isValidSave)
+                    {
+                        allNumbers.Add(highestNumber);
+                    }
+
+                }
+                if (allNumbers.Count > 0)
+                {
+                    highestNumber = allNumbers.Max();
+                }
+            }
+
+            if (incrementNumber)
+            {
+                highestNumber++;
+            }
+            if (highestNumber < 10)
+            {
+                returnString = "0" + highestNumber;
+            }
+            else
+            {
+                returnString = highestNumber.ToString();
+            }
+
+
+            return returnString;
+        }
+
+
+        //
 
     }
 

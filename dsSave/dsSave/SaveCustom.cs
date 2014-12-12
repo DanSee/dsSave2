@@ -2,7 +2,10 @@
 
 
 
+using System;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
+using System.Windows.Forms;
 
 namespace dsSave
 {
@@ -10,59 +13,32 @@ namespace dsSave
     public class SaveCustom : Save
     {
 
-
-        public override void doMySaveFuckYea(string selected)
+        public override void doMySaveFuckYea(string dsMainSave, string gameSaveName, string dsCustomSaveDir)
         {
-            string selectedSave = currentlyViewedDirectory + selected;
-            FileInfo selectedSaveData = new FileInfo(selectedSave);
-
-            if (File.Exists(selectedSave))
-            {
-                if (selectedSaveData.Length == SAVE_SIZE)
-                {
-                    File.Copy(dsMainSave,
-                        dsMainBackupSaveDir + DEFAULT_SAVE_NAME + "." + getTimestamp(".dd_MMM_yyyy.hh;mm;sstt"), true);
-                    File.Copy(selectedSave, dsMainSave, true);
-//                    printLabel("Loaded: " + selected, "Loaded custom");
-                }
-                else
-                {
-                    MessageBox.Show(selected + "  is not a valid save file. " + Environment.NewLine +
-                                    "(if this IS in fact a valid save file, give it a .sl2 extention and try to load again.)");
-                }
-            }
-            else
-            {
-                MessageBox.Show("File no longer exists");
-            }
-        }
-
-        public void Click(string gameSaveName)
-        {
-            getSaveDirRefs();
             string dataToSave = dsCustomSaveDir + gameSaveName;
 
-            if (File.Exists(dsMainSave))
+            if (File.Exists(dataToSave))
             {
-                if (File.Exists(dataToSave))
-                {
-                    confirmOverwrite(dataToSave, gameSaveName);
-                }
-                else
-                {
-                    File.Copy(dsMainSave, dataToSave, true);
-                }
-//                printLabel("Saved " + gameSaveName, "Saved custom");
+                confirmOverwrite(dataToSave, gameSaveName, dsMainSave);
             }
             else
             {
-                MessageBox.Show("The main save data is missing.");
-//                printLabel("Save data missing", "Failed custom save");
+                File.Copy(dsMainSave, dataToSave, true);
             }
         }
 
+        public override void loadSave(string dsMainSave, string selectedSave, string notUsedHere)
+        {
+            //backup
+//            File.Copy(dsMainSave,
+//                dsMainBackupSaveDir + DEFAULT_SAVE_NAME + "." + utils.getTimestamp(".dd_MMM_yyyy.hh;mm;sstt"), true);
+            File.Copy(selectedSave, dsMainSave, true);
+                
+        }
 
-        public void confirmOverwrite(string dataToSave, string gameSaveName)
+  
+
+        public void confirmOverwrite(string dataToSave, string gameSaveName, string dsMainSave)
         {
             DialogResult resultOfDelete = MessageBox.Show("Saving will overwrite " + gameSaveName + ", Continue?",
                 "confirmation", MessageBoxButtons.YesNoCancel);
@@ -73,8 +49,6 @@ namespace dsSave
             }
         }
 
-      
-    
-    }
+   }
 
 }

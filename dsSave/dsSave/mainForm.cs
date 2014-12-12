@@ -13,35 +13,29 @@ namespace dsSave
 {
     public partial class mainForm : Form
     {
-        private SaveMgr saveMan;
-        private string currentDirectory;
-
-        /// <summary>
-        /// //////////////
-        /// </summary>
+        private UImanager uiManager;
         private RealSaveManager realSaveManager; 
 
         public mainForm()
         {
             InitializeComponent();
-            saveMan = new SaveMgr(lblDisplay, lblTimestamp);
-            saveMan.checkForSavePath();
-            //TODO Set a cookie so that on program load it will always remember what directory you were last viewing
-            saveMan.refreshSavedGames(lstBoxSavedGames);
+            uiManager = new UImanager(lblDisplay, lblTimestamp);
+            realSaveManager.checkForSavePath();
+            uiManager.refreshSavedGames(lstBoxSavedGames);
             createContextMenu();
         }
 
         private void btnQuickSave_Click(object sender, EventArgs e)
         {
-            saveMan.quickSaveClick();
-            saveMan.refreshSavedGames(lstBoxSavedGames, saveMan.dsQuickSaveDir);
+            realSaveManager.quickSaveClick();
+            uiManager.refreshSavedGames(lstBoxSavedGames, realSaveManager.dsQuickSaveDir);
             enableDisableButtons();
         }
 
         private void btnLoadQuickSave_Click(object sender, EventArgs e)
         {
-            saveMan.loadQuicksaveClick();
-            saveMan.refreshSavedGames(lstBoxSavedGames);
+            realSaveManager.loadQuickSaveClick();
+            uiManager.refreshSavedGames(lstBoxSavedGames);
             enableDisableButtons();
         }
         
@@ -50,8 +44,8 @@ namespace dsSave
             
             if (saveCustomTextBox.Text != "")
             {
-                saveMan.saveCustom(saveCustomTextBox.Text);
-                saveMan.refreshSavedGames(lstBoxSavedGames, saveMan.dsCustomSaveDir);
+                realSaveManager.customSaveClick(saveCustomTextBox.Text);
+                uiManager.refreshSavedGames(lstBoxSavedGames, realSaveManager.dsCustomSaveDir);
                 enableDisableButtons();
             }
             else
@@ -65,8 +59,8 @@ namespace dsSave
             string selected = lstBoxSavedGames.GetItemText(lstBoxSavedGames.SelectedItem);
             if (selected != "")
             {
-                saveMan.loadCustomClick(selected);
-                saveMan.refreshSavedGames(lstBoxSavedGames);
+                realSaveManager.loadCustomSaveClick(selected);
+                uiManager.refreshSavedGames(lstBoxSavedGames);
                 enableDisableButtons();
             }
             else
@@ -78,7 +72,7 @@ namespace dsSave
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-             saveMan.refreshSavedGames(lstBoxSavedGames);
+             uiManager.refreshSavedGames(lstBoxSavedGames);
         }
 
         
@@ -111,14 +105,16 @@ namespace dsSave
              private void deleteSelectedSave(object sender, System.EventArgs e)
         {
             string selected = lstBoxSavedGames.GetItemText(lstBoxSavedGames.SelectedItem);
-            saveMan.deleteSelectedSave(selected);
-            saveMan.refreshSavedGames(lstBoxSavedGames);
+            realSaveManager.deleteSelectedSave(selected);
+            uiManager.refreshSavedGames(lstBoxSavedGames);
         }
 
         private void enterSaveDIrectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveMan.firstRun();
-            saveMan.checkForSavePath();
+            realSaveManager.firstRun();
+            uiManager.refreshSavedGames(lstBoxSavedGames);
+
+            realSaveManager.checkForSavePath();
         }
 
         private void lstBoxSavedGames_MouseDown(object sender, MouseEventArgs e)
@@ -131,24 +127,19 @@ namespace dsSave
 
         private void btnQuickSaves_Click(object sender, EventArgs e)
         {
-            saveMan.refreshSavedGames(lstBoxSavedGames, saveMan.dsQuickSaveDir);
+            uiManager.refreshSavedGames(lstBoxSavedGames, realSaveManager.dsQuickSaveDir);
         }
 
         private void btnCustomSaves_Click(object sender, EventArgs e)
         {
-            saveMan.refreshSavedGames(lstBoxSavedGames, saveMan.dsCustomSaveDir);
+            uiManager.refreshSavedGames(lstBoxSavedGames, realSaveManager.dsCustomSaveDir);
 
         }
 
         private void btnAutoSaves_Click(object sender, EventArgs e)
         {
-            saveMan.refreshSavedGames(lstBoxSavedGames, saveMan.dsAutoSaveDir);
+            uiManager.refreshSavedGames(lstBoxSavedGames, realSaveManager.dsAutoSaveDir);
 
-        }
-
-        private void setCurrentDir(string currentDir)
-        {
-            currentDirectory = currentDir;
         }
 
  
@@ -156,6 +147,8 @@ namespace dsSave
         {
 
         }
+
+
     }
     
 }
