@@ -28,9 +28,15 @@ namespace dsSave
 
         private void btnQuickSave_Click(object sender, EventArgs e)
         {
-             printLabel("Quick Save", rSM.quickSaveClick());
-            uiManager.refreshSavedGames(lstBoxSavedGames, rSM.dsQuickSaveDir);
-            enableDisableButtons();
+            int i = 0;
+            while (i <= 11)
+            {
+                i++;
+                printLabel("Quick Save", rSM.quickSaveClick());
+                uiManager.refreshSavedGames(lstBoxSavedGames, rSM.dsQuickSaveDir);
+                enableDisableButtons();
+            }
+          
         }
 
         private void btnLoadQuickSave_Click(object sender, EventArgs e)
@@ -89,7 +95,7 @@ namespace dsSave
         private void enableDisableButtons()
         {
             enableButtons(false);
-            Thread.Sleep(1500);
+            Thread.Sleep(1100);
             enableButtons(true);
         }
 

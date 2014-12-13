@@ -43,7 +43,7 @@ namespace dsSave
 
         public bool customSaveClick(string gameSaveName)
         {
-           getSaveDirRefs();
+            getSaveDirRefs();
             bool success = false;
 
             if (File.Exists(dsMainSave))
@@ -93,7 +93,7 @@ namespace dsSave
 
             if (isSaveDataValid())
             {
-                _quick.doMySaveFuckYea(dsMainSave, DEFAULT_QUICKSAVE_NAME, dsQuickSaveDir + getHighestSaveNumber(true));
+                _quick.doMySaveFuckYea(dsMainSave, DEFAULT_QUICKSAVE_NAME, dsQuickSaveDir);
                 success = true;
             }
             else
@@ -133,7 +133,7 @@ namespace dsSave
             return success;
         }
 
-        
+
 
         public void autoSaveClick()
         {
@@ -143,9 +143,11 @@ namespace dsSave
 
         public void saveUserDirInRegistry()
         {
-            string prompt = "Please enter your Dark souls game save directory." + Environment.NewLine + Environment.NewLine
-                       + "Your save directory should be something like: " + Environment.NewLine + Environment.NewLine
-                       + @"C:\Users\_windowsUsername_\Documents\NBGI\DarkSouls\_windowsLiveUsername_\";
+            string prompt = "Please enter your Dark souls game save directory." + Environment.NewLine +
+                            Environment.NewLine
+                            + "Your save directory should be something like: " + Environment.NewLine +
+                            Environment.NewLine
+                            + @"C:\Users\_windowsUsername_\Documents\NBGI\DarkSouls\_windowsLiveUsername_\";
             string title = @"Set save game directory";
             string defaultText = @"C:\Users\dann\AppData\Roaming\DarkSoulsII\0110000105e1a214";
 
@@ -158,7 +160,8 @@ namespace dsSave
             }
             while (!Directory.Exists(userSaveDir) || !File.Exists(userSaveDir + DEFAULT_SAVE_NAME))
             {
-                DialogResult tryAgain = MessageBox.Show("That was not a valid directory, try again?", "confirmation", MessageBoxButtons.YesNo);
+                DialogResult tryAgain = MessageBox.Show("That was not a valid directory, try again?", "confirmation",
+                    MessageBoxButtons.YesNo);
                 userSaveDir = Microsoft.VisualBasic.Interaction.InputBox(prompt, title, userSaveDir, -1, -1);
             }
 
@@ -169,8 +172,8 @@ namespace dsSave
         public void checkForSavePath()
         {
 
-           userSaveDir = getUserSaveDir();
-         //   userSaveDir = @"C:\Users\dann\AppData\Roaming\DarkSoulsII\0110000105e1a214\";
+            userSaveDir = getUserSaveDir();
+            //   userSaveDir = @"C:\Users\dann\AppData\Roaming\DarkSoulsII\0110000105e1a214\";
             dsMainSave = userSaveDir + DEFAULT_SAVE_NAME;
             while (!isSaveDataValid())
             {
@@ -246,9 +249,10 @@ namespace dsSave
         {
             if (isSaveDataValid())
             {
-                DialogResult setAnyways = MessageBox.Show("Your save directory is already Valid. Set new save directory anyways?",
-                    "confirmation",
-                    MessageBoxButtons.YesNo);
+                DialogResult setAnyways =
+                    MessageBox.Show("Your save directory is already Valid. Set new save directory anyways?",
+                        "confirmation",
+                        MessageBoxButtons.YesNo);
                 if (setAnyways == DialogResult.Yes)
                 {
                     saveUserDirInRegistry();
@@ -290,6 +294,10 @@ namespace dsSave
         {
             int highestNumber = 0;
             string returnString;
+            int numberPart;
+            string namePart;
+
+
             DirectoryInfo directory = new DirectoryInfo(dsQuickSaveDir);
             FileInfo[] files = directory.GetFiles();
             if (files.Length != 0)
@@ -297,40 +305,98 @@ namespace dsSave
                 List<int> allNumbers = new List<int>();
                 foreach (FileInfo f in files)
                 {
-                    bool isValidSave = int.TryParse(f.Name.Substring(0, 2), out highestNumber);
-                    if (isValidSave)
+                    numberPart = Int16.Parse(f.Name.Substring(0, 2));
+                    namePart = f.Name.Substring(2);
+
+                    if (numberPart == 100)
                     {
-                        allNumbers.Add(highestNumber);
+                        //Delete this file
+                    }
+                    {
+                        numberPart += 1;
                     }
 
+
+
+
+
+//                    bool isValidSave = int.TryParse(f.Name.Substring(0, 2), out highestNumber);
+//                    if (isValidSave)
+//                    {
+//                        allNumbers.Add(highestNumber);
+//                    }
+//
+//                }
+//                if (allNumbers.Count > 0)
+//                {
+//                    highestNumber = allNumbers.Max();
+//                }
                 }
-                if (allNumbers.Count > 0)
+
+                if (incrementNumber)
                 {
-                    highestNumber = allNumbers.Max();
+                    highestNumber++;
                 }
-            }
+                if (highestNumber < 10)
+                {
+                    returnString = "0" + highestNumber;
+                }
+                else
+                {
+                    returnString = highestNumber.ToString();
+                }
 
-            if (incrementNumber)
-            {
-                highestNumber++;
-            }
-            if (highestNumber < 10)
-            {
-                returnString = "0" + highestNumber;
-            }
-            else
-            {
-                returnString = highestNumber.ToString();
+
+                return returnString;
             }
 
 
-            return returnString;
+
+//        private string getHighestSaveNumber(bool incrementNumber = false)
+//        {
+//            int highestNumber = 0;
+//            string returnString;
+//            DirectoryInfo directory = new DirectoryInfo(dsQuickSaveDir);
+//            FileInfo[] files = directory.GetFiles();
+//            if (files.Length != 0)
+//            {
+//                List<int> allNumbers = new List<int>();
+//                foreach (FileInfo f in files)
+//                {
+//                    bool isValidSave = int.TryParse(f.Name.Substring(0, 2), out highestNumber);
+//                    if (isValidSave)
+//                    {
+//                        allNumbers.Add(highestNumber);
+//                    }
+//
+//                }
+//                if (allNumbers.Count > 0)
+//                {
+//                    highestNumber = allNumbers.Max();
+//                }
+//            }
+//
+//            if (incrementNumber)
+//            {
+//                highestNumber++;
+//            }
+//            if (highestNumber < 10)
+//            {
+//                returnString = "0" + highestNumber;
+//            }
+//            else
+//            {
+//                returnString = highestNumber.ToString();
+//            }
+//
+//
+//           
+//        }
+
+            //
+            return "";
         }
 
 
-        //
-
     }
-
-
 }
