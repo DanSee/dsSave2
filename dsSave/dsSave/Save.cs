@@ -1,10 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Security;
-using System.Windows.Forms;
-
-
-namespace dsSave
+﻿namespace dsSave
 {
     public abstract class Save
     {

@@ -48,6 +48,7 @@
             this.enterSaveDIrectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lblDisplay = new System.Windows.Forms.Label();
             this.lblTimestamp = new System.Windows.Forms.Label();
+            this.lblClock = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -234,13 +235,25 @@
             // 
             // lblTimestamp
             // 
+            this.lblTimestamp.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTimestamp.ForeColor = System.Drawing.Color.Black;
             this.lblTimestamp.Location = new System.Drawing.Point(12, 90);
             this.lblTimestamp.Name = "lblTimestamp";
-            this.lblTimestamp.Size = new System.Drawing.Size(360, 60);
+            this.lblTimestamp.Size = new System.Drawing.Size(178, 60);
             this.lblTimestamp.TabIndex = 17;
             this.lblTimestamp.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblTimestamp.Click += new System.EventHandler(this.lblTimestamp_Click);
+            // 
+            // lblClock
+            // 
+            this.lblClock.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblClock.ForeColor = System.Drawing.Color.Black;
+            this.lblClock.Location = new System.Drawing.Point(196, 90);
+            this.lblClock.Name = "lblClock";
+            this.lblClock.Size = new System.Drawing.Size(178, 60);
+            this.lblClock.TabIndex = 18;
+            this.lblClock.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblClock.Click += new System.EventHandler(this.label1_Click);
             // 
             // mainForm
             // 
@@ -248,6 +261,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(384, 670);
+            this.Controls.Add(this.lblClock);
             this.Controls.Add(this.lblTimestamp);
             this.Controls.Add(this.lblDisplay);
             this.Controls.Add(this.menuStrip1);
@@ -289,6 +303,7 @@
         private System.Windows.Forms.ToolStripMenuItem enterSaveDIrectoryToolStripMenuItem;
         private System.Windows.Forms.Label lblDisplay;
         private System.Windows.Forms.Label lblTimestamp;
+        private System.Windows.Forms.Label lblClock;
 
 
     }

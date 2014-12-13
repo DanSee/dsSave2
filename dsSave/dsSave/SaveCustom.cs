@@ -1,18 +1,10 @@
-﻿
-
-
-
-using System;
-using System.IO;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.IO;
 using System.Windows.Forms;
 
 namespace dsSave
 {
-
     public class SaveCustom : Save
     {
-
         public override void doMySaveFuckYea(string dsMainSave, string gameSaveName, string dsCustomSaveDir)
         {
             string dataToSave = dsCustomSaveDir + gameSaveName;
@@ -26,7 +18,7 @@ namespace dsSave
                 File.Copy(dsMainSave, dataToSave, true);
             }
         }
-
+        
         public override void loadSave(string dsMainSave, string selectedSave, string notUsedHere)
         {
             //BACKUP

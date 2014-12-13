@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Windows.Forms;
 
 namespace dsSave
 {
@@ -11,18 +8,15 @@ namespace dsSave
 
         public override void doMySaveFuckYea(string dsMainSave, string DEFAULT_QUICKSAVE_NAME, string dsQuickSaveDir)
         {
-
-            int numberPart = 0;
-            string namePart;
-
             DirectoryInfo directory = new DirectoryInfo(dsQuickSaveDir);
             FileInfo[] files = directory.GetFiles();
             if (files.Length != 0)
             {
+              
                 foreach (FileInfo f in files)
                 {
-                    numberPart = Int16.Parse(f.Name.Substring(0, 2));
-                    namePart = f.Name.Substring(2);
+                    int numberPart= Int16.Parse(f.Name.Substring(0, 2));
+                    string namePart = f.Name.Substring(2);
 
                     if (numberPart == 50)
                     {

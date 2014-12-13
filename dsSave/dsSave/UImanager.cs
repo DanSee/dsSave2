@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Windows.Forms;
 
 namespace dsSave
@@ -13,15 +6,6 @@ namespace dsSave
     internal class UImanager 
     {
         public RealSaveManager _realSave = new RealSaveManager();
-
-        private readonly Label displayLabel;
-        private readonly Label timeStampLabel;
-
-        public UImanager(Label lblDisplay, Label lblTimeStamp)
-        {
-            displayLabel = lblDisplay;
-            timeStampLabel = lblTimeStamp;
-        }
 
         public void refreshSavedGames(ListBox lstBoxSavedGames, string currentDirectory)
         {
@@ -66,7 +50,5 @@ namespace dsSave
                 lstBoxSavedGames.Items.Add("Nothing to show for this directory.");
             }
         }
-
-
     }
 }

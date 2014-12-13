@@ -1,46 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 
 namespace dsSave
 {
     public class RealSaveManager
     {
+        private const string REGKEY_SAVEDIR = "UserSaveDir";
+        private const string REGEKEY_LASTVIEWED = "LastViewedDir";
+        private const string DEFAULT_QUICKSAVE_NAME = @"quickSave";
+        private const string DEFAULT_AUTOSAVE_NAME = @"autoSave";
+        private const string DEFAULT_SAVE_NAME = @"DARKSII0000.sl2";
+        public const string QUICK_SAVE_DIR = @"_quickSaveGames\";
+        public const string CUSTOM_SAVE_DIR = @"_customSaveGames\";
+        private const string AUTO_SAVE_DIR = @"_autoSaveGames\";
+        public const string MAINBACKUP_SAVE_DIR = @"_MainSaveFileBackups\";
+        private const long SAVE_SIZE = 7203104;
 
         public Save _auto = new SaveAuto();
         public Save _custom = new SaveCustom();
         public Save _quick = new SaveQuick();
 
-        private string dsMainBackupSaveDir;
-        private string dsMainSave;
-        private const long SAVE_SIZE = 7203104;
-
-        public string currentlyViewedDirectory;
-        public string userSaveDir;
-        public string dsQuickSave;
-        public string dsAutoSave;
-
-        private const string REGKEY_SAVEDIR = "UserSaveDir";
-        private const string REGEKEY_LASTVIEWED = "LastViewedDir";
-
-        private const string DEFAULT_QUICKSAVE_NAME = @"quickSave";
-        private const string DEFAULT_AUTOSAVE_NAME = @"autoSave";
-        private const string DEFAULT_SAVE_NAME = @"DARKSII0000.sl2";
-
-        public const string QUICK_SAVE_DIR = @"_quickSaveGames\";
-        public const string CUSTOM_SAVE_DIR = @"_customSaveGames\";
-        private const string AUTO_SAVE_DIR = @"_autoSaveGames\";
-        public const string MAINBACKUP_SAVE_DIR = @"_MainSaveFileBackups\";
-
-
-        public string dsCustomSaveDir;
-        public string dsAutoSaveDir;
-        public string dsQuickSaveDir;
-
-
+        private string userSaveDir, dsMainBackupSaveDir,  dsMainSave ;
+        public string currentlyViewedDirectory, dsCustomSaveDir, dsQuickSave, dsAutoSave, dsQuickSaveDir, dsAutoSaveDir;
+        
         public bool customSaveClick(string gameSaveName)
         {
             getSaveDirRefs();
@@ -111,28 +94,14 @@ namespace dsSave
 
             if (files.Length != 0)
             {
-                string currentSaveNumber = getHighestSaveNumber();
-                int currentNumber;
-                string fileToLoad = "";
 
-                foreach (FileInfo f in files)
-                {
-                    int currSaveNum;
-                    int.TryParse(currentSaveNumber, out currSaveNum);
-                    bool isValidNumber = int.TryParse(f.Name.Substring(0, 2), out currentNumber);
-                    if (isValidNumber && currSaveNum == currentNumber)
-                    {
-                        fileToLoad = f.Name;
-                    }
-                }
-                _quick.loadSave(dsMainSave, fileToLoad, dsQuickSaveDir);
+                _quick.loadSave(dsMainSave, files[0].Name, dsQuickSaveDir);
                 setCurrentlyViewedDirectory(dsQuickSaveDir);
                 success = true;
             }
 
             return success;
         }
-
 
 
         public void autoSaveClick()
@@ -196,7 +165,6 @@ namespace dsSave
 
             getSaveDirRefs();
         }
-
 
         public void getSaveDirRefs()
         {
@@ -289,114 +257,5 @@ namespace dsSave
             }
             return rSaveDir;
         }
-
-        private string getHighestSaveNumber(bool incrementNumber = false)
-        {
-            int highestNumber = 0;
-            string returnString;
-            int numberPart;
-            string namePart;
-
-
-            DirectoryInfo directory = new DirectoryInfo(dsQuickSaveDir);
-            FileInfo[] files = directory.GetFiles();
-            if (files.Length != 0)
-            {
-                List<int> allNumbers = new List<int>();
-                foreach (FileInfo f in files)
-                {
-                    numberPart = Int16.Parse(f.Name.Substring(0, 2));
-                    namePart = f.Name.Substring(2);
-
-                    if (numberPart == 100)
-                    {
-                        //Delete this file
-                    }
-                    {
-                        numberPart += 1;
-                    }
-
-
-
-
-
-//                    bool isValidSave = int.TryParse(f.Name.Substring(0, 2), out highestNumber);
-//                    if (isValidSave)
-//                    {
-//                        allNumbers.Add(highestNumber);
-//                    }
-//
-//                }
-//                if (allNumbers.Count > 0)
-//                {
-//                    highestNumber = allNumbers.Max();
-//                }
-                }
-
-                if (incrementNumber)
-                {
-                    highestNumber++;
-                }
-                if (highestNumber < 10)
-                {
-                    returnString = "0" + highestNumber;
-                }
-                else
-                {
-                    returnString = highestNumber.ToString();
-                }
-
-
-                return returnString;
-            }
-
-
-
-//        private string getHighestSaveNumber(bool incrementNumber = false)
-//        {
-//            int highestNumber = 0;
-//            string returnString;
-//            DirectoryInfo directory = new DirectoryInfo(dsQuickSaveDir);
-//            FileInfo[] files = directory.GetFiles();
-//            if (files.Length != 0)
-//            {
-//                List<int> allNumbers = new List<int>();
-//                foreach (FileInfo f in files)
-//                {
-//                    bool isValidSave = int.TryParse(f.Name.Substring(0, 2), out highestNumber);
-//                    if (isValidSave)
-//                    {
-//                        allNumbers.Add(highestNumber);
-//                    }
-//
-//                }
-//                if (allNumbers.Count > 0)
-//                {
-//                    highestNumber = allNumbers.Max();
-//                }
-//            }
-//
-//            if (incrementNumber)
-//            {
-//                highestNumber++;
-//            }
-//            if (highestNumber < 10)
-//            {
-//                returnString = "0" + highestNumber;
-//            }
-//            else
-//            {
-//                returnString = highestNumber.ToString();
-//            }
-//
-//
-//           
-//        }
-
-            //
-            return "";
-        }
-
-
     }
 }
