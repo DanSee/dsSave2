@@ -86,7 +86,7 @@ namespace dsSave
             return success;
         }
 
-        public bool loadQuickSaveClick()
+        public bool loadQSClick()
         {
             bool success = false;
             DirectoryInfo directory = new DirectoryInfo(dsQuickSaveDir);
@@ -106,8 +106,14 @@ namespace dsSave
 
         public void autoSaveClick()
         {
+            
             getSaveDirRefs();
             _auto.doMySaveFuckYea("", "", "");
+        }
+
+        public void loadASClick()
+        {
+            //TODO
         }
 
         public void saveUserDirInRegistry()

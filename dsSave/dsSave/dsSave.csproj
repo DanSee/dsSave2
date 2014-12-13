@@ -58,7 +58,6 @@
     <Compile Include="Save.cs" />
     <Compile Include="SaveAuto.cs" />
     <Compile Include="SaveCustom.cs" />
-    <Compile Include="UImanager.cs" />
     <Compile Include="SaveQuick.cs" />
     <Compile Include="Utils.cs" />
     <EmbeddedResource Include="mainForm.resx">

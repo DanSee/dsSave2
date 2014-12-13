@@ -49,6 +49,7 @@
             this.lblDisplay = new System.Windows.Forms.Label();
             this.lblTimestamp = new System.Windows.Forms.Label();
             this.lblClock = new System.Windows.Forms.Label();
+            this.clockTimer = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -215,7 +216,6 @@
             this.menuStrip1.Size = new System.Drawing.Size(384, 24);
             this.menuStrip1.TabIndex = 14;
             this.menuStrip1.Text = "menuStrip1";
-            this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
             // 
             // enterSaveDIrectoryToolStripMenuItem
             // 
@@ -242,18 +242,21 @@
             this.lblTimestamp.Size = new System.Drawing.Size(178, 60);
             this.lblTimestamp.TabIndex = 17;
             this.lblTimestamp.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblTimestamp.Click += new System.EventHandler(this.lblTimestamp_Click);
             // 
             // lblClock
             // 
             this.lblClock.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblClock.ForeColor = System.Drawing.Color.Black;
-            this.lblClock.Location = new System.Drawing.Point(196, 90);
+            this.lblClock.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.lblClock.Location = new System.Drawing.Point(197, 90);
             this.lblClock.Name = "lblClock";
             this.lblClock.Size = new System.Drawing.Size(178, 60);
             this.lblClock.TabIndex = 18;
             this.lblClock.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblClock.Click += new System.EventHandler(this.label1_Click);
+            // 
+            // clockTimer
+            // 
+            this.clockTimer.Enabled = true;
+            this.clockTimer.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // mainForm
             // 
@@ -304,6 +307,7 @@
         private System.Windows.Forms.Label lblDisplay;
         private System.Windows.Forms.Label lblTimestamp;
         private System.Windows.Forms.Label lblClock;
+        private System.Windows.Forms.Timer clockTimer;
 
 
     }
