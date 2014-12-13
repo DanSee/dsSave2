@@ -16,7 +16,6 @@ namespace dsSave
                 File.Copy(dsMainSave, newSaveName);
         }
 
-
         public override void loadSave(string dsMainSave, string fileToLoad, string dsQuickSaveDir)
         {
             //BACKUP    

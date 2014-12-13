@@ -29,14 +29,12 @@ namespace dsSave
 
         public override void loadSave(string dsMainSave, string selectedSave, string notUsedHere)
         {
-            //backup
+            //BACKUP
 //            File.Copy(dsMainSave,
 //                dsMainBackupSaveDir + DEFAULT_SAVE_NAME + "." + utils.getTimestamp(".dd_MMM_yyyy.hh;mm;sstt"), true);
             File.Copy(selectedSave, dsMainSave, true);
                 
         }
-
-  
 
         public void confirmOverwrite(string dataToSave, string gameSaveName, string dsMainSave)
         {
@@ -48,7 +46,6 @@ namespace dsSave
                 File.Copy(dsMainSave, dataToSave, true);
             }
         }
-
    }
 
 }

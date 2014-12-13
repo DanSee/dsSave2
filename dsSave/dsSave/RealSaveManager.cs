@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 
 namespace dsSave
@@ -13,47 +14,54 @@ namespace dsSave
         public Save _custom = new SaveCustom();
         public Save _quick = new SaveQuick();
 
-        public const string DEFAULT_SAVE_NAME = @"DARKSII0000.sl2";
-        public const string MAINBACKUP_SAVE_DIR = @"_MainSaveFileBackups\";
+        private string dsMainBackupSaveDir;
+        private string dsMainSave;
+        private const long SAVE_SIZE = 7203104;
 
-        public string dsMainBackupSaveDir;
-        public string dsMainSave;
-
-        //Fuck everyting needs to share these also.  Kind of. 
-        /// ///////////////////////////////////////
-        public const long SAVE_SIZE = 4330480;
         public string currentlyViewedDirectory;
         public string userSaveDir;
         public string dsQuickSave;
         public string dsAutoSave;
-        public const string REGKEY_SAVEDIR = "UserSaveDir";
-        public const string REGEKEY_LASTVIEWED = "LastViewedDir";
-        public const string DEFAULT_QUICKSAVE_NAME = @"quickSave";
+
+        private const string REGKEY_SAVEDIR = "UserSaveDir";
+        private const string REGEKEY_LASTVIEWED = "LastViewedDir";
+
+        private const string DEFAULT_QUICKSAVE_NAME = @"quickSave";
+        private const string DEFAULT_AUTOSAVE_NAME = @"autoSave";
+        private const string DEFAULT_SAVE_NAME = @"DARKSII0000.sl2";
+
         public const string QUICK_SAVE_DIR = @"_quickSaveGames\";
         public const string CUSTOM_SAVE_DIR = @"_customSaveGames\";
+        private const string AUTO_SAVE_DIR = @"_autoSaveGames\";
+        public const string MAINBACKUP_SAVE_DIR = @"_MainSaveFileBackups\";
+
+
         public string dsCustomSaveDir;
         public string dsAutoSaveDir;
         public string dsQuickSaveDir;
-        private const string AUTO_SAVE_DIR = @"_autoSaveGames\";
-        private const string DEFAULT_AUTOSAVE_NAME = @"autoSave";
 
 
-        public void customSaveClick(string gameSaveName)
+        public bool customSaveClick(string gameSaveName)
         {
            getSaveDirRefs();
+            bool success = false;
 
             if (File.Exists(dsMainSave))
             {
                 _custom.doMySaveFuckYea(dsMainSave, gameSaveName, dsCustomSaveDir);
+                success = true;
             }
             else
             {
                 MessageBox.Show("The main save data is missing.");
             }
+
+            return success;
         }
 
-        public void loadCustomSaveClick(String selected)
+        public bool loadCSClick(String selected)
         {
+            bool success = false;
             string selectedSave = currentlyViewedDirectory + selected;
             FileInfo selectedSaveData = new FileInfo(selectedSave);
 
@@ -61,8 +69,8 @@ namespace dsSave
             {
                 if (selectedSaveData.Length == SAVE_SIZE)
                 {
-                    _custom.loadSave(dsMainSave, selectedSave, "");
-                    printLabel("Loaded: " + selected, "Loaded custom");
+                    _custom.loadSave(dsMainSave, selectedSave, "unusedParam");
+                    success = true;
                 }
                 else
                 {
@@ -74,23 +82,30 @@ namespace dsSave
             {
                 MessageBox.Show("File no longer exists");
             }
+            return success;
         }
 
-        public void quickSaveClick()
+        public bool quickSaveClick()
         {
             getSaveDirRefs();
+
+            bool success = false;
+
             if (isSaveDataValid())
             {
                 _quick.doMySaveFuckYea(dsMainSave, DEFAULT_QUICKSAVE_NAME, dsQuickSaveDir + getHighestSaveNumber(true));
+                success = true;
             }
             else
             {
                 MessageBox.Show("Save data is not valid", "Failed  quicksave");
             }
+            return success;
         }
 
-        public void loadQuickSaveClick()
+        public bool loadQuickSaveClick()
         {
+            bool success = false;
             DirectoryInfo directory = new DirectoryInfo(dsQuickSaveDir);
             FileInfo[] files = directory.GetFiles();
 
@@ -110,14 +125,12 @@ namespace dsSave
                         fileToLoad = f.Name;
                     }
                 }
-                _quick.loadSave(dsMainSave, fileToLoad, "");
+                _quick.loadSave(dsMainSave, fileToLoad, dsQuickSaveDir);
                 setCurrentlyViewedDirectory(dsQuickSaveDir);
-                printLabel("Loaded most recent Quicksave", "Quicksave loaded");
+                success = true;
             }
-            else
-            {
-                printLabel("There is no quicksave file to load!", "Failed loading quicksave");
-            }
+
+            return success;
         }
 
         
@@ -156,8 +169,8 @@ namespace dsSave
         public void checkForSavePath()
         {
 
-            //  userSaveDir = getUserSaveDir();
-            userSaveDir = @"C:\Users\dann\AppData\Roaming\DarkSoulsII\0110000105e1a214\";
+           userSaveDir = getUserSaveDir();
+         //   userSaveDir = @"C:\Users\dann\AppData\Roaming\DarkSoulsII\0110000105e1a214\";
             dsMainSave = userSaveDir + DEFAULT_SAVE_NAME;
             while (!isSaveDataValid())
             {

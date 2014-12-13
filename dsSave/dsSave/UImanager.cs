@@ -23,9 +23,6 @@ namespace dsSave
             timeStampLabel = lblTimeStamp;
         }
 
-     
-
-
         public void refreshSavedGames(ListBox lstBoxSavedGames, string currentDirectory)
         {
             _realSave.getSaveDirRefs();
@@ -69,12 +66,6 @@ namespace dsSave
                 lstBoxSavedGames.Items.Add("Nothing to show for this directory.");
             }
         }
-        private void printLabel(string text, string lastAction)
-        {
-            displayLabel.Text = text;
-            timeStampLabel.Text = "Last action @ " + Utils.getTimestamp("HH:mm:ss") + " - Action was: " + lastAction;
-        }
-     
 
 
     }

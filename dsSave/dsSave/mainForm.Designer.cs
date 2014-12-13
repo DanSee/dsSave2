@@ -151,7 +151,7 @@
             this.groupBox1.Controls.Add(this.saveCustomTextBox);
             this.groupBox1.Controls.Add(this.saveCustom);
             this.groupBox1.Controls.Add(this.lstBoxSavedGames);
-            this.groupBox1.Location = new System.Drawing.Point(12, 157);
+            this.groupBox1.Location = new System.Drawing.Point(12, 180);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(360, 484);
             this.groupBox1.TabIndex = 8;
@@ -226,19 +226,21 @@
             // lblDisplay
             // 
             this.lblDisplay.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDisplay.Location = new System.Drawing.Point(12, 90);
+            this.lblDisplay.Location = new System.Drawing.Point(15, 157);
             this.lblDisplay.Name = "lblDisplay";
-            this.lblDisplay.Size = new System.Drawing.Size(360, 64);
+            this.lblDisplay.Size = new System.Drawing.Size(360, 20);
             this.lblDisplay.TabIndex = 15;
             this.lblDisplay.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblTimestamp
             // 
-            this.lblTimestamp.Location = new System.Drawing.Point(12, 644);
+            this.lblTimestamp.ForeColor = System.Drawing.Color.Black;
+            this.lblTimestamp.Location = new System.Drawing.Point(12, 90);
             this.lblTimestamp.Name = "lblTimestamp";
-            this.lblTimestamp.Size = new System.Drawing.Size(360, 23);
-            this.lblTimestamp.TabIndex = 16;
+            this.lblTimestamp.Size = new System.Drawing.Size(360, 60);
+            this.lblTimestamp.TabIndex = 17;
             this.lblTimestamp.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblTimestamp.Click += new System.EventHandler(this.lblTimestamp_Click);
             // 
             // mainForm
             // 
