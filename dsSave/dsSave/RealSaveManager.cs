@@ -104,16 +104,10 @@ namespace dsSave
         }
 
 
-        public void autoSaveClick()
+        public void autoSaveTick()
         {
-            
             getSaveDirRefs();
             _auto.doMySaveFuckYea("", "", "");
-        }
-
-        public void loadASClick()
-        {
-            //TODO
         }
 
         public void saveUserDirInRegistry()

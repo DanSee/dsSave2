@@ -50,6 +50,8 @@
             this.lblTimestamp = new System.Windows.Forms.Label();
             this.lblClock = new System.Windows.Forms.Label();
             this.clockTimer = new System.Windows.Forms.Timer(this.components);
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.tmrAutoSave = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -258,6 +260,11 @@
             this.clockTimer.Enabled = true;
             this.clockTimer.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // tmrAutoSave
+            // 
+            this.tmrAutoSave.Enabled = true;
+            this.tmrAutoSave.Tick += new System.EventHandler(this.tmrAutoSave_Tick);
+            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -308,6 +315,8 @@
         private System.Windows.Forms.Label lblTimestamp;
         private System.Windows.Forms.Label lblClock;
         private System.Windows.Forms.Timer clockTimer;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer tmrAutoSave;
 
 
     }

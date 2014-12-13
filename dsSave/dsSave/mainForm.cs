@@ -28,7 +28,7 @@ namespace dsSave
 
         private void btnLoadQuickSave_Click(object sender, EventArgs e)
         {
-            printLabel( "Quick Load", rSM.loadQuickSaveClick());
+            printLabel( "Quick Load", rSM.loadQSClick());
              refreshSavedGames(lstBoxSavedGames);
             enableDisableButtons();
         }
@@ -186,6 +186,11 @@ namespace dsSave
             {
                 lstBoxSavedGames.Items.Add("Nothing to show for this directory.");
             }
+        }
+
+        private void tmrAutoSave_Tick(object sender, EventArgs e)
+        {
+            rSM.autoSaveTick();
         }
     }
     
