@@ -262,7 +262,6 @@
             // 
             // tmrAutoSave
             // 
-            this.tmrAutoSave.Enabled = true;
             this.tmrAutoSave.Tick += new System.EventHandler(this.tmrAutoSave_Tick);
             // 
             // mainForm
